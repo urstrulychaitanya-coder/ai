@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeLearn Pro - Interactive Programming Education</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .code-editor {
+            font-family: 'Courier New', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .syntax-error { color: #f44336; }
+        .syntax-keyword { color: #569cd6; }
+        .syntax-string { color: #ce9178; }
+        .syntax-comment { color: #6a9955; }
+        .syntax-number { color: #b5cea8; }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b-4 border-blue-500">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">💻</span>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-800">CodeLearn Pro</h1>
+                </div>
+                <nav class="flex space-x-6">
+                    <button class="nav-btn bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors" onclick="showSection('tutorials')">Tutorials</button>
+                    <button class="nav-btn bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors" onclick="showSection('exercises')">Exercises</button>
+                    <button class="nav-btn bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors" onclick="showSection('analyzer')">Code Analyzer</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Interactive Tutorials Section -->
+        <section id="tutorials" class="section-content">
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+                    📚 Interactive Tutorials
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Tutorial Content -->
+                    <div class="space-y-6">
+                        <div class="tutorial-step bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+                            <h3 class="text-xl font-semibold text-blue-800 mb-3">Step 1: Variables in JavaScript</h3>
+                            <p class="text-gray-700 mb-4">Learn how to declare and use variables. Variables store data that can be used throughout your program.</p>
+                            <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                                <span class="syntax-keyword">let</span> <span class="syntax-string">message</span> = <span class="syntax-string">"Hello, World!"</span>;<br>
+                                <span class="syntax-keyword">const</span> <span class="syntax-string">pi</span> = <span class="syntax-number">3.14159</span>;
+                            </div>
+                        </div>
+                        
+                        <div class="tutorial-navigation flex space-x-4">
+                            <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors" onclick="previousStep()">← Previous</button>
+                            <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors" onclick="nextStep()">Next →</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Interactive Practice -->
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h4 class="text-lg font-semibold mb-4">Try it yourself:</h4>
+                        <textarea id="tutorial-code" class="code-editor w-full h-32 p-4 rounded-lg resize-none" placeholder="// Write your code here
+let yourName = 'Your Name';
+console.log('Hello, ' + yourName);">let yourName = 'Your Name';
+console.log('Hello, ' + yourName);</textarea>
+                        <button class="mt-4 bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors" onclick="runTutorialCode()">▶ Run Code</button>
+                        <div id="tutorial-output" class="mt-4 p-4 bg-black text-green-400 rounded-lg font-mono text-sm min-h-[60px]"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exercise Generation Section -->
+        <section id="exercises" class="section-content hidden">
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+                    🎯 Programming Exercises
+                </h2>
+                
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Exercise Generator -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-lg mb-6">
+                            <h3 class="text-xl font-semibold mb-4">Generate New Exercise</h3>
+                            <select id="difficulty" class="w-full p-3 rounded-lg text-gray-800 mb-4">
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                            <select id="topic" class="w-full p-3 rounded-lg text-gray-800 mb-4">
+                                <option value="variables">Variables</option>
+                                <option value="functions">Functions</option>
+                                <option value="loops">Loops</option>
+                                <option value="arrays">Arrays</option>
+                                <option value="objects">Objects</option>
+                            </select>
+                            <button class="w-full bg-white text-purple-600 font-semibold py-3 rounded-lg hover:bg-gray-100 transition-colors" onclick="generateExercise()">🎲 Generate Exercise</button>
+                        </div>
+                        
+                        <!-- Exercise Stats -->
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">Your Progress</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span>Completed:</span>
+                                    <span class="font-semibold text-green-600" id="completed-count">12</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Success Rate:</span>
+                                    <span class="font-semibold text-blue-600" id="success-rate">85%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Current Exercise -->
+                    <div class="lg:col-span-2">
+                        <div id="current-exercise" class="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+                            <h3 class="text-xl font-semibold text-blue-800 mb-3">Exercise: Sum of Array Elements</h3>
+                            <p class="text-gray-700 mb-4">Write a function that takes an array of numbers and returns their sum.</p>
+                            <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                                <strong>Example:</strong><br>
+                                Input: [1, 2, 3, 4, 5]<br>
+                                Output: 15
+                            </div>
+                            
+                            <textarea id="exercise-code" class="code-editor w-full h-40 p-4 rounded-lg resize-none" placeholder="// Write your solution here
+function sumArray(numbers) {
+    // Your code here
+}">function sumArray(numbers) {
+    // Your code here
+}</textarea>
+                            
+                            <div class="flex space-x-4 mt-4">
+                                <button class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors" onclick="runExercise()">▶ Test Solution</button>
+                                <button class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors" onclick="getHint()">💡 Get Hint</button>
+                                <button class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors" onclick="showSolution()">👁 Show Solution</button>
+                            </div>
+                            
+                            <div id="exercise-results" class="mt-4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Analyzer Section -->
+        <section id="analyzer" class="section-content hidden">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+                    🔍 Code Analysis & Debugging
+                </h2>
+                
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Code Input -->
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">Your Code</h3>
+                        <textarea id="analyzer-code" class="code-editor w-full h-80 p-4 rounded-lg resize-none" placeholder="// Paste your JavaScript code here for analysis
+function calculateArea(radius) {
+    if (radius < 0) {
+        return 'Invalid radius';
+    }
+    return 3.14159 * radius * radius;
+}
+
+let result = calculateArea(5);
+console.log('Area:', result);">function calculateArea(radius) {
+    if (radius < 0) {
+        return 'Invalid radius';
+    }
+    return 3.14159 * radius * radius;
+}
+
+let result = calculateArea(5);
+console.log('Area:', result);</textarea>
+                        
+                        <div class="flex space-x-4 mt-4">
+                            <button class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors" onclick="analyzeCode()">🔍 Analyze Code</button>
+                            <button class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors" onclick="runAnalyzerCode()">▶ Run Code</button>
+                            <button class="bg-purple-500 text-white px-6 py-2 rounded-lg hover:bg-purple-600 transition-colors" onclick="formatCode()">✨ Format Code</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Analysis Results -->
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">Analysis Results</h3>
+                        <div id="analysis-results" class="space-y-4">
+                            <!-- Error Analysis -->
+                            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                                <h4 class="font-semibold text-red-800 flex items-center mb-2">
+                                    ❌ Errors Found
+                                </h4>
+                                <div id="error-list" class="text-red-700 text-sm">
+                                    <p>✅ No syntax errors detected</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Suggestions -->
+                            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-lg">
+                                <h4 class="font-semibold text-yellow-800 flex items-center mb-2">
+                                    💡 Suggestions
+                                </h4>
+                                <div id="suggestion-list" class="text-yellow-700 text-sm">
+                                    <p>• Consider using const for PI value</p>
+                                    <p>• Add input validation for non-numeric values</p>
+                                    <p>• Consider using Math.PI instead of hardcoded value</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Code Quality -->
+                            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+                                <h4 class="font-semibold text-green-800 flex items-center mb-2">
+                                    📊 Code Quality Score
+                                </h4>
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-1 bg-gray-200 rounded-full h-4">
+                                        <div id="quality-bar" class="bg-green-500 h-4 rounded-full transition-all duration-500" style="width: 85%"></div>
+                                    </div>
+                                    <span id="quality-score" class="font-semibold text-green-700">85/100</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Output -->
+                            <div class="bg-gray-50 border-l-4 border-gray-500 p-4 rounded-lg">
+                                <h4 class="font-semibold text-gray-800 flex items-center mb-2">
+                                    📤 Output
+                                </h4>
+                                <div id="analyzer-output" class="bg-black text-green-400 p-3 rounded font-mono text-sm min-h-[60px]">
+                                    Area: 78.53975
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Global state
+        let currentTutorialStep = 1;
+        let totalSteps = 5;
+        let exerciseData = {};
+        
+        // Navigation
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section-content').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).classList.remove('hidden');
+            document.getElementById(sectionName).classList.add('slide-in');
+            
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-offset-2');
+            });
+            event.target.classList.add('ring-2', 'ring-offset-2', 'ring-blue-300');
+        }
+        
+        // Tutorial Functions
+        function nextStep() {
+            if (currentTutorialStep < totalSteps) {
+                currentTutorialStep++;
+                updateTutorialContent();
+            }
+        }
+        
+        function previousStep() {
+            if (currentTutorialStep > 1) {
+                currentTutorialStep--;
+                updateTutorialContent();
+            }
+        }
+        
+        function updateTutorialContent() {
+            const tutorials = {
+                1: {
+                    title: "Step 1: Variables in JavaScript",
+                    content: "Learn how to declare and use variables. Variables store data that can be used throughout your program.",
+                    code: `let message = "Hello, World!";\nconst pi = 3.14159;`,
+                    practice: `let yourName = 'Your Name';\nconsole.log('Hello, ' + yourName);`
+                },
+                2: {
+                    title: "Step 2: Functions",
+                    content: "Functions are reusable blocks of code that perform specific tasks.",
+                    code: `function greet(name) {\n    return "Hello, " + name + "!";\n}`,
+                    practice: `function addNumbers(a, b) {\n    return a + b;\n}\n\nconsole.log(addNumbers(5, 3));`
+                },
+                3: {
+                    title: "Step 3: Conditional Statements",
+                    content: "Use if/else statements to make decisions in your code.",
+                    code: `if (age >= 18) {\n    console.log("Adult");\n} else {\n    console.log("Minor");\n}`,
+                    practice: `let temperature = 25;\nif (temperature > 30) {\n    console.log("Hot day!");\n} else {\n    console.log("Nice weather!");\n}`
+                }
+            };
+            
+            const tutorial = tutorials[currentTutorialStep] || tutorials[1];
+            document.querySelector('.tutorial-step h3').textContent = tutorial.title;
+            document.querySelector('.tutorial-step p').textContent = tutorial.content;
+            document.querySelector('.tutorial-step .bg-gray-800').innerHTML = syntaxHighlight(tutorial.code);
+            document.getElementById('tutorial-code').value = tutorial.practice;
+        }
+        
+        function runTutorialCode() {
+            const code = document.getElementById('tutorial-code').value;
+            const output = document.getElementById('tutorial-output');
+            
+            try {
+                // Capture console.log output
+                let logs = [];
+                const originalLog = console.log;
+                console.log = (...args) => {
+                    logs.push(args.join(' '));
+                };
+                
+                // Execute code
+                eval(code);
+                
+                // Restore console.log
+                console.log = originalLog;
+                
+                output.innerHTML = logs.length > 0 ? logs.join('\n') : 'Code executed successfully!';
+                output.className = 'mt-4 p-4 bg-black text-green-400 rounded-lg font-mono text-sm min-h-[60px]';
+            } catch (error) {
+                output.innerHTML = `Error: ${error.message}`;
+                output.className = 'mt-4 p-4 bg-black text-red-400 rounded-lg font-mono text-sm min-h-[60px]';
+            }
+        }
+        
+        // Exercise Functions
+        function generateExercise() {
+            const difficulty = document.getElementById('difficulty').value;
+            const topic = document.getElementById('topic').value;
+            
+            const exercises = {
+                beginner: {
+                    variables: {
+                        title: "Create a Greeting Variable",
+                        description: "Create a variable called 'greeting' and assign it the value 'Hello, World!'. Then log it to the console.",
+                        example: "Expected output: Hello, World!",
+                        solution: "let greeting = 'Hello, World!';\nconsole.log(greeting);"
+                    },
+                    functions: {
+                        title: "Simple Addition Function",
+                        description: "Write a function called 'add' that takes two parameters and returns their sum.",
+                        example: "add(3, 5) should return 8",
+                        solution: "function add(a, b) {\n    return a + b;\n}"
+                    }
+                },
+                intermediate: {
+                    arrays: {
+                        title: "Find Maximum in Array",
+                        description: "Write a function that finds the largest number in an array.",
+                        example: "findMax([1, 5, 3, 9, 2]) should return 9",
+                        solution: "function findMax(arr) {\n    return Math.max(...arr);\n}"
+                    },
+                    loops: {
+                        title: "Count Even Numbers",
+                        description: "Write a function that counts how many even numbers are in an array.",
+                        example: "countEvens([1, 2, 3, 4, 5, 6]) should return 3",
+                        solution: "function countEvens(arr) {\n    return arr.filter(n => n % 2 === 0).length;\n}"
+                    }
+                }
+            };
+            
+            const exercise = exercises[difficulty]?.[topic] || exercises.beginner.variables;
+            exerciseData = exercise;
+            
+            document.querySelector('#current-exercise h3').textContent = `Exercise: ${exercise.title}`;
+            document.querySelector('#current-exercise p').textContent = exercise.description;
+            document.querySelector('#current-exercise .bg-gray-100').innerHTML = `<strong>Example:</strong><br>${exercise.example}`;
+            document.getElementById('exercise-code').value = `// Write your solution here\n`;
+            document.getElementById('exercise-results').innerHTML = '';
+        }
+        
+        function runExercise() {
+            const code = document.getElementById('exercise-code').value;
+            const results = document.getElementById('exercise-results');
+            
+            try {
+                let logs = [];
+                const originalLog = console.log;
+                console.log = (...args) => {
+                    logs.push(args.join(' '));
+                };
+                
+                eval(code);
+                console.log = originalLog;
+                
+                results.innerHTML = `
+                    <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+                        <h4 class="font-semibold text-green-800">✅ Test Results</h4>
+                        <p class="text-green-700">Code executed successfully!</p>
+                        ${logs.length > 0 ? `<div class="mt-2 font-mono text-sm bg-black text-green-400 p-2 rounded">${logs.join('\n')}</div>` : ''}
+                    </div>
+                `;
+                
+                // Update stats
+                const completed = parseInt(document.getElementById('completed-count').textContent) + 1;
+                document.getElementById('completed-count').textContent = completed;
+                
+            } catch (error) {
+                results.innerHTML = `
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                        <h4 class="font-semibold text-red-800">❌ Error Found</h4>
+                        <p class="text-red-700">${error.message}</p>
+                        <p class="text-sm text-red-600 mt-2">Check your syntax and try again.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function getHint() {
+            const hints = [
+                "💡 Remember to use a loop to iterate through the array",
+                "💡 You can use the += operator to add to a running total",
+                "💡 Don't forget to initialize your sum variable to 0",
+                "💡 Make sure to return the final result"
+            ];
+            
+            const randomHint = hints[Math.floor(Math.random() * hints.length)];
+            document.getElementById('exercise-results').innerHTML = `
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg">
+                    <h4 class="font-semibold text-blue-800">Hint</h4>
+                    <p class="text-blue-700">${randomHint}</p>
+                </div>
+            `;
+        }
+        
+        function showSolution() {
+            if (exerciseData.solution) {
+                document.getElementById('exercise-code').value = exerciseData.solution;
+                document.getElementById('exercise-results').innerHTML = `
+                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-lg">
+                        <h4 class="font-semibold text-yellow-800">💡 Solution Revealed</h4>
+                        <p class="text-yellow-700">The solution has been loaded into the editor. Study it to understand the approach!</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Code Analyzer Functions
+        function analyzeCode() {
+            const code = document.getElementById('analyzer-code').value;
+            
+            // Simple code analysis
+            const errors = [];
+            const suggestions = [];
+            let qualityScore = 100;
+            
+            // Check for common issues
+            if (code.includes('var ')) {
+                suggestions.push('• Consider using let or const instead of var');
+                qualityScore -= 10;
+            }
+            
+            if (code.includes('3.14159') && !code.includes('Math.PI')) {
+                suggestions.push('• Use Math.PI instead of hardcoded pi value');
+                qualityScore -= 5;
+            }
+            
+            if (!code.includes('function') && code.length > 50) {
+                suggestions.push('• Consider breaking code into functions for better organization');
+                qualityScore -= 10;
+            }
+            
+            // Check for syntax errors (basic)
+            try {
+                new Function(code);
+            } catch (error) {
+                errors.push(`Syntax Error: ${error.message}`);
+                qualityScore -= 30;
+            }
+            
+            // Update UI
+            document.getElementById('error-list').innerHTML = errors.length > 0 
+                ? errors.map(e => `<p class="text-red-600">❌ ${e}</p>`).join('')
+                : '<p class="text-green-600">✅ No syntax errors detected</p>';
+                
+            document.getElementById('suggestion-list').innerHTML = suggestions.length > 0
+                ? suggestions.join('<br>')
+                : '✅ Code looks good! No suggestions at this time.';
+                
+            document.getElementById('quality-score').textContent = `${Math.max(qualityScore, 0)}/100`;
+            document.getElementById('quality-bar').style.width = `${Math.max(qualityScore, 0)}%`;
+            
+            // Update bar color based on score
+            const bar = document.getElementById('quality-bar');
+            if (qualityScore >= 80) bar.className = 'bg-green-500 h-4 rounded-full transition-all duration-500';
+            else if (qualityScore >= 60) bar.className = 'bg-yellow-500 h-4 rounded-full transition-all duration-500';
+            else bar.className = 'bg-red-500 h-4 rounded-full transition-all duration-500';
+        }
+        
+        function runAnalyzerCode() {
+            const code = document.getElementById('analyzer-code').value;
+            const output = document.getElementById('analyzer-output');
+            
+            try {
+                let logs = [];
+                const originalLog = console.log;
+                console.log = (...args) => {
+                    logs.push(args.join(' '));
+                };
+                
+                eval(code);
+                console.log = originalLog;
+                
+                output.innerHTML = logs.length > 0 ? logs.join('\n') : 'Code executed successfully (no output)';
+                output.className = 'bg-black text-green-400 p-3 rounded font-mono text-sm min-h-[60px]';
+            } catch (error) {
+                output.innerHTML = `Error: ${error.message}`;
+                output.className = 'bg-black text-red-400 p-3 rounded font-mono text-sm min-h-[60px]';
+            }
+        }
+        
+        function formatCode() {
+            const code = document.getElementById('analyzer-code').value;
+            // Simple formatting (basic indentation)
+            const formatted = code
+                .replace(/\{/g, ' {\n    ')
+                .replace(/\}/g, '\n}')
+                .replace(/;/g, ';\n')
+                .replace(/\n\s*\n/g, '\n')
+                .trim();
+            
+            document.getElementById('analyzer-code').value = formatted;
+        }
+        
+        // Syntax highlighting helper
+        function syntaxHighlight(code) {
+            return code
+                .replace(/(let|const|var|function|if|else|return)/g, '<span class="syntax-keyword">$1</span>')
+                .replace(/"([^"]*)"/g, '<span class="syntax-string">"$1"</span>')
+                .replace(/'([^']*)'/g, '<span class="syntax-string">\'$1\'</span>')
+                .replace(/(\d+\.?\d*)/g, '<span class="syntax-number">$1</span>')
+                .replace(/\/\/.*$/gm, '<span class="syntax-comment">$&</span>');
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('tutorials');
+            generateExercise();
+            analyzeCode();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97e516fd12c7a7e4',t:'MTc1NzczOTcxOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
